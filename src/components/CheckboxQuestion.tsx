@@ -16,23 +16,30 @@ export default function CheckboxQuestion({ id, question, choices, value, onChang
   };
 
   return (
-    <div className="space-y-3">
-      <p className="text-slate-900 font-medium">{question}</p>
-      <div className="space-y-2">
+    <div className="space-y-4">
+      <div>
+        <p className="text-[#090C02] font-medium text-base sm:text-lg mb-2">{question}</p>
+        <p className="text-[#090C02]/60 text-sm">Select all that apply</p>
+      </div>
+      <div className="space-y-3">
         {choices.map((choice, index) => (
           <label
             key={index}
             htmlFor={`${id}-${index}`}
-            className="flex items-center gap-3 p-3 border border-slate-200 rounded-md hover:bg-slate-50 cursor-pointer transition-colors"
+            className={`flex items-start gap-3 p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 ${
+              value.includes(index)
+                ? 'bg-[#DDE2C6]/40 border-[#BBC5AA] shadow-sm'
+                : 'bg-white/60 border-[#DDE2C6] hover:border-[#BBC5AA] hover:bg-[#DDE2C6]/20'
+            }`}
           >
             <input
               type="checkbox"
               id={`${id}-${index}`}
               checked={value.includes(index)}
               onChange={() => handleChange(index)}
-              className="w-4 h-4 text-blue-600 rounded focus:ring-2 focus:ring-blue-500 cursor-pointer"
+              className="w-5 h-5 text-[#A72608] rounded focus:ring-2 focus:ring-[#BBC5AA] cursor-pointer mt-0.5 flex-shrink-0"
             />
-            <span className="text-slate-700">{choice}</span>
+            <span className="text-[#090C02]/90 leading-relaxed">{choice}</span>
           </label>
         ))}
       </div>
