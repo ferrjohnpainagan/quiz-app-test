@@ -1,26 +1,37 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Earthy Color Palette - https://coolors.co/palette/e6eed6-dde2c6-bbc5aa-a72608-090c02 */
+  --sage-light: #E6EED6;
+  --sage-medium: #DDE2C6;
+  --sage-dark: #BBC5AA;
+  --terracotta: #A72608;
+  --charcoal: #090C02;
+
+  --background: var(--sage-light);
+  --foreground: var(--charcoal);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --font-sans: var(--font-outfit);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Custom colors for Tailwind */
+  --color-sage-light: #E6EED6;
+  --color-sage-medium: #DDE2C6;
+  --color-sage-dark: #BBC5AA;
+  --color-terracotta: #A72608;
+  --color-charcoal: #090C02;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-outfit), sans-serif;
+}
+
+/* Ensure all buttons have cursor pointer */
+button {
+  cursor: pointer;
 }
