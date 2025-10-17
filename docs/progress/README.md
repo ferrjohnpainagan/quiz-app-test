@@ -29,6 +29,49 @@ This directory contains incremental progress reports that document the developme
 
 ---
 
+### [002 - Grading System and Results](./002-grading-system-and-results.md)
+**Date:** 2025-10-17
+**Status:** ✅ Complete
+
+**Topics Covered:**
+- Zod validation schemas for runtime type safety
+- Pure grading functions for each question type
+- POST /api/grade endpoint implementation
+- Quiz submission flow and state management
+- Results page with per-question feedback
+- Error handling strategies (400 vs 500)
+
+**Key Decisions:**
+- Zod for runtime validation with type inference
+- Separate pure functions per question type (testability)
+- Sorted array comparison for checkbox order-independence
+- SessionStorage for results (pragmatic simplicity)
+- All-or-nothing grading for checkboxes (clarity over complexity)
+
+---
+
+### [003 - Testing and Security](./003-testing-and-security.md)
+**Date:** 2025-10-17
+**Status:** ✅ Complete
+
+**Topics Covered:**
+- Comprehensive test suite (51 tests, 100% pass rate)
+- Unit tests for grading logic (25 tests)
+- Security validation tests (26 tests)
+- XSS prevention with input sanitization
+- DoS protection with length limits
+- Type confusion prevention
+- Bounds checking and edge case coverage
+
+**Key Decisions:**
+- Vitest for fast test execution (<1 second)
+- Multi-layer security validation (Zod + business logic + type guards)
+- XSS sanitization via angle bracket removal
+- Security constants for centralized limits
+- Pure function testing for speed and simplicity
+
+---
+
 ## How to Use These Docs
 
 ### For Development Continuity
