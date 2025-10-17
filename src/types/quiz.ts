@@ -29,3 +29,14 @@ export interface CheckboxQuestion {
 
 // Union of all question types
 export type Question = TextQuestion | RadioQuestion | CheckboxQuestion;
+
+// Client-facing question types (without answer keys for security)
+export type ClientQuestion =
+  | Omit<TextQuestion, 'correctText'>
+  | Omit<RadioQuestion, 'correctIndex'>
+  | Omit<CheckboxQuestion, 'correctIndexes'>;
+
+// Response from GET /api/quiz
+export interface QuizResponse {
+  questions: ClientQuestion[];
+}
