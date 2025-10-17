@@ -72,6 +72,29 @@ This directory contains incremental progress reports that document the developme
 
 ---
 
+### [004 - State Management and Timer](./004-state-management-and-timer.md)
+**Date:** 2025-10-17
+**Status:** ✅ Complete
+
+**Topics Covered:**
+- Zustand global state management implementation
+- Timer system with Unix timestamps
+- Quiz session persistence with localStorage
+- Auto-submission on time expiration
+- Progressive timer urgency (visual warnings)
+- Confirmation modals for critical actions
+- Session guards and navigation protection
+
+**Key Decisions:**
+- Zustand for global state (eliminated prop drilling)
+- persist middleware for automatic localStorage sync
+- Partial state persistence (only quiz data, not UI states)
+- Timestamp-based timer calculation (prevents drift)
+- Auto-submit on timer expiration (guarantees completion)
+- Progressive visual urgency (color changes at 60s and 30s)
+
+---
+
 ## How to Use These Docs
 
 ### For Development Continuity
