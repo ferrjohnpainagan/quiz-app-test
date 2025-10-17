@@ -40,3 +40,27 @@ export type ClientQuestion =
 export interface QuizResponse {
   questions: ClientQuestion[];
 }
+
+// Answer submitted by user
+export interface Answer {
+  id: string | number;
+  value: string | number | number[];
+}
+
+// Request to POST /api/grade
+export interface GradeRequest {
+  answers: Answer[];
+}
+
+// Result for individual question
+export interface QuestionResult {
+  id: string | number;
+  correct: boolean;
+}
+
+// Response from POST /api/grade
+export interface GradeResponse {
+  score: number;
+  total: number;
+  results: QuestionResult[];
+}
