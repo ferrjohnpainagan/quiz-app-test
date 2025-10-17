@@ -5,6 +5,9 @@ import { gradeRequestSchema, validateAnswerTypes } from '@/lib/validation/schema
 
 const grade = new Hono();
 
+// Time limit for quiz (5 minutes)
+const TIME_LIMIT = 5 * 60 * 1000; // milliseconds
+
 grade.post('/', async (c) => {
   try {
     const body = await c.req.json();
@@ -22,9 +25,24 @@ grade.post('/', async (c) => {
       );
     }
 
-    const { answers } = validation.data;
+    const { answers, startedAt } = validation.data;
 
-    // Step 2: Validate answer types match question types
+    // Step 2: Validate time limit (server-authoritative)
+    const submittedAt = Date.now();
+    const elapsed = submittedAt - startedAt;
+
+    if (elapsed > TIME_LIMIT) {
+      return c.json(
+        {
+          error: 'Time limit exceeded',
+          timeLimit: TIME_LIMIT,
+          elapsed,
+        },
+        400
+      );
+    }
+
+    // Step 3: Validate answer types match question types
     const typeValidation = validateAnswerTypes(answers, questions);
 
     if (!typeValidation.valid) {
@@ -34,7 +52,7 @@ grade.post('/', async (c) => {
       );
     }
 
-    // Step 3: Grade the quiz
+    // Step 4: Grade the quiz
     const results = gradeQuiz(questions, answers);
     const score = results.filter((r) => r.correct).length;
 

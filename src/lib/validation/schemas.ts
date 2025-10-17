@@ -35,11 +35,14 @@ export const answerSchema = z.object({
   ]),
 });
 
-// Enhanced grade request schema
+// Enhanced grade request schema with timestamp validation
 export const gradeRequestSchema = z.object({
   answers: z.array(answerSchema)
     .min(1, 'At least one answer required')
     .max(MAX_ANSWERS, 'Too many answers'),
+  startedAt: z.number()
+    .int('Start time must be an integer')
+    .positive('Start time must be positive'),
 });
 
 // Validate that answer types match question types

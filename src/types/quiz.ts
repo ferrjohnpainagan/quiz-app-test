@@ -50,6 +50,7 @@ export interface Answer {
 // Request to POST /api/grade
 export interface GradeRequest {
   answers: Answer[];
+  startedAt: number; // Unix timestamp when quiz started
 }
 
 // Result for individual question
