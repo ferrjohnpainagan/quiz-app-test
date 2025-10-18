@@ -5,7 +5,7 @@ import CheckboxQuestion from './CheckboxQuestion';
 
 interface QuizQuestionProps {
   question: ClientQuestion;
-  value: string | number | number[];
+  value: string | number | number[] | null;
   onChange: (value: string | number | number[]) => void;
 }
 
