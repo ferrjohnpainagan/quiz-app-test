@@ -2,6 +2,7 @@ import { Hono } from 'hono';
 import { questions } from '@/lib/data/questions';
 import { gradeQuiz } from '@/lib/utils/grading';
 import { gradeRequestSchema, validateAnswerTypes } from '@/lib/validation/schemas';
+import { mapAnswerToOriginal } from '@/lib/utils/shuffle';
 
 const grade = new Hono();
 
@@ -25,7 +26,7 @@ grade.post('/', async (c) => {
       );
     }
 
-    const { answers, startedAt } = validation.data;
+    const { answers, startedAt, shuffleMapping } = validation.data;
 
     // Step 2: Validate time limit (server-authoritative)
     const submittedAt = Date.now();
@@ -42,8 +43,13 @@ grade.post('/', async (c) => {
       );
     }
 
-    // Step 3: Validate answer types match question types
-    const typeValidation = validateAnswerTypes(answers, questions);
+    // Step 3: Map shuffled answers back to original indices
+    const originalAnswers = shuffleMapping
+      ? answers.map((answer) => mapAnswerToOriginal(answer, shuffleMapping))
+      : answers;
+
+    // Step 4: Validate answer types match question types
+    const typeValidation = validateAnswerTypes(originalAnswers, questions);
 
     if (!typeValidation.valid) {
       return c.json(
@@ -52,8 +58,8 @@ grade.post('/', async (c) => {
       );
     }
 
-    // Step 4: Grade the quiz
-    const results = gradeQuiz(questions, answers);
+    // Step 5: Grade the quiz using original indices
+    const results = gradeQuiz(questions, originalAnswers);
     const score = results.filter((r) => r.correct).length;
 
     return c.json({
