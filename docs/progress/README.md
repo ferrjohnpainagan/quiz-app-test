@@ -95,6 +95,29 @@ This directory contains incremental progress reports that document the developme
 
 ---
 
+### [005 - Deterministic Shuffling](./005-deterministic-shuffling.md)
+**Date:** 2025-10-17
+**Status:** ✅ Complete
+
+**Topics Covered:**
+- Fisher-Yates shuffle algorithm implementation
+- Seeded randomization with seedrandom library
+- Bidirectional index mapping system
+- Two-level shuffling (questions + choices)
+- Integration with grading system
+- Backwards compatibility with optional mapping
+- Persistence across page refresh
+
+**Key Decisions:**
+- Fisher-Yates for unbiased, O(n) shuffling
+- crypto.randomUUID() for unique seeds
+- Bidirectional mappings for fast O(1) index translation
+- Server-side index remapping during grading
+- Optional shuffleMapping for gradual rollout
+- Separate storage of original and shuffled questions
+
+---
+
 ## How to Use These Docs
 
 ### For Development Continuity
