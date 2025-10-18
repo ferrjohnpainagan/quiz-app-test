@@ -50,8 +50,25 @@ export default function QuizPage() {
   const checkAnsweredQuestions = () => {
     const answered = questions.filter((q) => {
       const answer = answers[q.id]
-      if (answer === undefined || answer === null || answer === "") return false
-      if (Array.isArray(answer) && answer.length === 0) return false
+
+      // Check if answer exists in the answers object
+      if (!(q.id in answers)) return false
+
+      // For text questions: empty string is unanswered
+      if (q.type === "text" && (answer === "" || answer === null || answer === undefined)) {
+        return false
+      }
+
+      // For radio questions: null/undefined is unanswered, but 0 is valid
+      if (q.type === "radio" && (answer === null || answer === undefined)) {
+        return false
+      }
+
+      // For checkbox questions: empty array is unanswered
+      if (q.type === "checkbox" && Array.isArray(answer) && answer.length === 0) {
+        return false
+      }
+
       return true
     })
     return answered
@@ -99,9 +116,6 @@ export default function QuizPage() {
   }
 
   const handleModalClose = () => {
-    const answeredQuestions = checkAnsweredQuestions()
-    // Only close modal if at least one question is answered (allows "Go Back")
-    // Or if user hasn't tried to submit yet (allows "Cancel" on info modal)
     setShowModal(false)
   }
 
@@ -174,8 +188,13 @@ export default function QuizPage() {
                   <QuizQuestion
                     question={question}
                     value={
-                      answers[question.id] ||
-                      (question.type === "checkbox" ? [] : "")
+                      answers[question.id] !== undefined
+                        ? answers[question.id]
+                        : question.type === "checkbox"
+                        ? []
+                        : question.type === "radio"
+                        ? null
+                        : ""
                     }
                     onChange={(value) => setAnswer(question.id, value)}
                   />
