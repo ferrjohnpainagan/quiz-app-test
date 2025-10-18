@@ -47,10 +47,25 @@ export interface Answer {
   value: string | number | number[];
 }
 
+// Choice mapping for shuffled questions
+export interface ChoiceMapping {
+  questionId: string;
+  originalToShuffled: Record<number, number>;
+  shuffledToOriginal: Record<number, number>;
+}
+
+// Shuffle mapping for deterministic shuffling
+export interface ShuffleMapping {
+  seed: string;
+  questionOrder: string[];
+  choiceMappings: ChoiceMapping[];
+}
+
 // Request to POST /api/grade
 export interface GradeRequest {
   answers: Answer[];
   startedAt: number; // Unix timestamp when quiz started
+  shuffleMapping?: ShuffleMapping; // Optional for backwards compatibility
 }
 
 // Result for individual question
