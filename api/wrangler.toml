@@ -13,4 +13,4 @@ name = "enrolla-quiz-api-production"
 
 [env.production.vars]
 NODE_ENV = "production"
-ALLOWED_ORIGINS = "https://quiz-app-test-one.vercel.app/"
+ALLOWED_ORIGINS = "https://quiz-app-test-one.vercel.app"
