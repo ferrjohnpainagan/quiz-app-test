@@ -71,7 +71,8 @@ export const useQuizStore = create<QuizStore>()(
       fetchQuestions: async () => {
         set({ loading: true, error: null })
         try {
-          const res = await fetch("/api/quiz")
+          const apiUrl = process.env.NEXT_PUBLIC_API_URL || "/api"
+          const res = await fetch(`${apiUrl}/quiz`)
           if (!res.ok) throw new Error("Failed to load quiz")
 
           const data = await res.json()
@@ -150,7 +151,8 @@ export const useQuizStore = create<QuizStore>()(
             })
           )
 
-          const res = await fetch("/api/grade", {
+          const apiUrl = process.env.NEXT_PUBLIC_API_URL || "/api"
+          const res = await fetch(`${apiUrl}/grade`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
