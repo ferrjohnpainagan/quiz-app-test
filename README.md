@@ -1,69 +1,101 @@
 # Enrolla Quiz App
 
-A full-stack quiz application built with Next.js 15, Hono, and TailwindCSS. Features multiple question types, runtime validation, comprehensive security measures, and deterministic shuffling.
+A full-stack quiz application with a Next.js 15 frontend and Hono API backend deployed on Cloudflare Workers. Features multiple question types, runtime validation, comprehensive security measures, and deterministic shuffling.
 
 ## Quick Start
 
 ### Prerequisites
 
 - Node.js 18+
+- Cloudflare account (for API deployment)
 
 ### Installation
 
+**Frontend (Next.js):**
 ```bash
 npm install
 npm run dev
 ```
 
-Access at [http://localhost:3000](http://localhost:3000)
+**Backend (Cloudflare Workers):**
+```bash
+cd api
+npm install
+npm run dev
+```
+
+Access frontend at [http://localhost:3000](http://localhost:3000)
+API runs at [http://localhost:8787/api](http://localhost:8787/api)
 
 ### Scripts
 
+**Frontend:**
 ```bash
-npm run dev          # Start development server
+npm run dev          # Start Next.js dev server
 npm run build        # Production build
 npm start            # Run production server
 npm test             # Run tests
 npm run lint         # Run ESLint
 ```
 
+**Backend API:**
+```bash
+cd api
+npm run dev          # Start local Cloudflare Worker
+npm run deploy       # Deploy to Cloudflare Workers
+```
+
 ## Project Structure
 
 ```
-src/
-├── app/
-│   ├── api/[[...route]]/   # Hono API routes
-│   ├── page.tsx            # Quiz page
-│   └── results/page.tsx    # Results page
-├── components/             # React components
-├── lib/
-│   ├── hono/              # Hono backend + middleware
-│   ├── data/              # Mock quiz data
-│   ├── utils/             # Grading, shuffling, sanitization
-│   └── validation/        # Zod schemas
-├── store/                 # Zustand state management
-├── types/quiz.ts          # TypeScript types
-└── __tests__/             # Vitest tests
+├── api/                        # Cloudflare Workers backend
+│   ├── src/
+│   │   ├── index.ts           # Hono app entry point
+│   │   ├── routes/            # Quiz & grade endpoints
+│   │   ├── middleware/        # Security, CORS, rate limiting
+│   │   ├── utils/             # Grading, shuffling logic
+│   │   ├── validation/        # Zod schemas
+│   │   ├── data/              # Quiz questions
+│   │   └── types/             # TypeScript types
+│   ├── wrangler.toml          # Cloudflare config
+│   └── package.json
+├── src/                        # Next.js frontend
+│   ├── app/
+│   │   ├── page.tsx           # Home page
+│   │   ├── start/page.tsx     # Quiz start
+│   │   ├── quiz/page.tsx      # Quiz page
+│   │   └── results/page.tsx   # Results page
+│   ├── components/            # React components
+│   ├── lib/utils/             # Frontend utilities
+│   ├── store/                 # Zustand state management
+│   └── types/                 # TypeScript types
+└── package.json               # Frontend dependencies
 ```
 
 ## Architecture Overview
 
-### Backend: Hono API
+### Backend: Hono on Cloudflare Workers
 
-Using Hono instead of Next.js native API routes for:
+Deployed as a standalone Cloudflare Worker for:
 
-- Better TypeScript inference and type-safe request/response handling
+- **Edge performance**: Sub-50ms response times globally
+- **Scalability**: Auto-scaling serverless architecture
+- **Cost efficiency**: Free tier covers ~100k requests/day
+- **Type safety**: Full TypeScript support with Hono
+- **Clean separation**: Independent deployment from frontend
+
+**Why Cloudflare Workers?**
+- Better TypeScript inference than Next.js API routes
 - Clean middleware composition (CORS, security headers, rate limiting)
-- Superior DX with cleaner routing syntax
-- Edge-ready architecture
-
-**Runtime:** Node.js (easier debugging, familiar tooling, sufficient for this scope)
+- Zero cold starts with edge deployment
+- Deploy backend independently from frontend
 
 ### Frontend: Next.js App Router
 
 - Modern React patterns with Server Components support
 - File-system routing
-- Current Next.js best practices
+- Deployed to Vercel (recommended)
+- Connects to Cloudflare Worker API via `NEXT_PUBLIC_API_URL`
 
 ### State Management: Zustand
 
@@ -283,11 +315,56 @@ npm test
 - Deterministic shuffling with index mapping
 - Timer persistence across refreshes
 
+## Deployment
+
+### Backend (Cloudflare Workers)
+
+1. **Install Wrangler CLI:**
+```bash
+npm install -g wrangler
+```
+
+2. **Login to Cloudflare:**
+```bash
+cd api
+wrangler login
+```
+
+3. **Deploy:**
+```bash
+npm run deploy
+```
+
+Your API will be at: `https://enrolla-quiz-api.YOUR_SUBDOMAIN.workers.dev`
+
+4. **Configure production CORS** in `api/wrangler.toml`:
+```toml
+[env.production.vars]
+ALLOWED_ORIGINS = "https://your-vercel-app.vercel.app"
+```
+
+### Frontend (Vercel)
+
+1. **Set environment variable:**
+```bash
+# In Vercel dashboard or .env.local
+NEXT_PUBLIC_API_URL=https://enrolla-quiz-api.YOUR_SUBDOMAIN.workers.dev/api
+```
+
+2. **Deploy:**
+```bash
+vercel deploy
+```
+
+See [api/README.md](api/README.md) for detailed deployment instructions.
+
 ## API Documentation
+
+**Hosted on Cloudflare Workers** at edge locations globally.
 
 ### GET /api/quiz
 
-Returns shuffled questions with answer keys removed.
+Returns questions with answer keys removed.
 
 **Response (200):**
 
@@ -347,6 +424,43 @@ Grades submitted answers using shuffle mapping to translate back to original ind
     { "id": "4", "correct": false }
   ]
 }
+```
+
+## Local Development
+
+### Running Both Services
+
+**Terminal 1 - Backend:**
+```bash
+cd api
+npm run dev
+# API at http://localhost:8787/api
+```
+
+**Terminal 2 - Frontend:**
+```bash
+# Create .env.local
+echo "NEXT_PUBLIC_API_URL=http://localhost:8787/api" > .env.local
+
+npm run dev
+# Frontend at http://localhost:3000
+```
+
+The frontend will automatically connect to the local Cloudflare Worker.
+
+### Testing API Endpoints
+
+```bash
+# Get quiz questions
+curl http://localhost:8787/api/quiz
+
+# Grade quiz (POST)
+curl -X POST http://localhost:8787/api/grade \
+  -H "Content-Type: application/json" \
+  -d '{
+    "answers": [{"id": "1", "value": "test"}],
+    "startedAt": '$(date +%s000)'
+  }'
 ```
 
 ## Time Spent
