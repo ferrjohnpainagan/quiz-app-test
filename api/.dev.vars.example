@@ -1,0 +1,5 @@
+# Development environment variables for local Cloudflare Workers
+# Copy this to .dev.vars for local development
+
+NODE_ENV=development
+ALLOWED_ORIGINS=http://localhost:3000

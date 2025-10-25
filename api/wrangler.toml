@@ -1,0 +1,16 @@
+name = "enrolla-quiz-api"
+main = "src/index.ts"
+compatibility_date = "2024-01-01"
+
+# Environment variables
+[vars]
+NODE_ENV = "production"
+ALLOWED_ORIGINS = "http://localhost:3000"
+
+# Production environment
+[env.production]
+name = "enrolla-quiz-api-production"
+
+[env.production.vars]
+NODE_ENV = "production"
+ALLOWED_ORIGINS = "https://quiz-app-test-one.vercel.app/"
